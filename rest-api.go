@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+	"os"
 	"github.com/gorilla/mux"
 )
 
@@ -19,15 +19,25 @@ func main() {
 }
 
 func Test(w http.ResponseWriter, r *http.Request) {
-	response := HipChatResponse{Color: "yellow", Message: "This is a Test", Notify: "false", MessageFormat: "text"}
+	hostname,err := os.Hostname()
+	if err != nil {
+		log.Fatal("No hostname.")
+	}
+	response := HipChatResponse{Color: "yellow", Message: "This is a Test", Notify: "false", MessageFormat: "text", Hostname: hostname}
 	json.NewEncoder(w).Encode(response)
+	log.Print("Test Action")
 }
 
 func Hola(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
-	response := HipChatResponse{Color: "yellow", Message: "Hola " + name, Notify: "false", MessageFormat: "text"}
+	hostname,err := os.Hostname()
+	if err != nil {
+		log.Fatal("No hostname.")
+	}
+	response := HipChatResponse{Color: "yellow", Message: "Hola " + name, Notify: "false", MessageFormat: "text", Hostname: hostname}
 	json.NewEncoder(w).Encode(response)
+	log.Print("Hola Action")
 }
 
 type HipChatResponse struct {
@@ -35,6 +45,7 @@ type HipChatResponse struct {
 	Message       string `json:"message"`
 	Notify        string `json:"notify"`
 	MessageFormat string `json:"message_format"`
+	Hostname      string `json:"hostname"`
 }
 
 type HipChatrequest struct {
